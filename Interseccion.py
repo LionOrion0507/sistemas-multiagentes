@@ -9,8 +9,8 @@ import IPython
 import socket
 
 
-f = open("initialPos.txt", "w")
-f2 = open("positionsSimul.txt", "w")
+f = open("Assets\Script\initialPos.txt", "w")
+f2 = open("Assets\Script\positionsSimul.txt", "w")
 class MODEL_TYPE(Enum):
   CAR = 0
   DEPORTIVE = 1
@@ -45,28 +45,28 @@ class Vehiculo(ap.Agent):
   def starting_position(self):                           
     spot = random.choice(self.grid.empty)
     if self.dir == 'up':
-      while spot[0] >= 9 or spot[1] != 29:
+      while (spot[0] <= 27 or spot[0] >= 41) or spot[1] != 33:
         spot = random.choice(self.grid.empty)
       print(f"Up {spot}\n")
       f.write(f"{spot[0]} {spot[1]}\n")
       self.grid.move_to(self, spot)
 
     elif self.dir == 'down':
-      while spot[0] <= 28 and spot[0] >= 40 or spot[1] != 33:
+      while (spot[0] >= 8 or spot[0] <= -5) or spot[1] != 29:
         spot = random.choice(self.grid.empty)
       print(f"Down {spot}\n")
       f.write(f"{spot[0]} {spot[1]}\n")
       self.grid.move_to(self, spot)
 
     elif self.dir == 'left':
-      while spot[0] != 15 or spot[1] <= 33:
+      while spot[0] != 30 or (spot[1] <= 40 or spot[1] >= 55):
         spot = random.choice(self.grid.empty)
       f.write(f"{spot[0]} {spot[1]}\n")
       print(f"left {spot}\n")
       self.grid.move_to(self, spot)
 
     elif self.dir == 'right':
-      while spot[0] != 21 or spot[1] >= 17:
+      while spot[0] != 34 or (spot[1] >= 22 or spot[1] <= 9):
         spot = random.choice(self.grid.empty)
       f.write(f"{spot[0]} {spot[1]}\n")
       print(f"Right {spot}\n")
@@ -191,7 +191,7 @@ class Interseccion(ap.Model):
 
     for c in self.cars:
       car_pos = street[c]
-      f2.write(f"{str(c)} {str(car_pos)}\n")
+      f2.write(f"{str(car_pos[0])} {str(car_pos[1])}\n")
       #print(f"Carro No. {c} esta en pos: {car_pos}")
       if car_pos == n_stop or car_pos == s_stop:
         n_s_empty = False
@@ -200,7 +200,7 @@ class Interseccion(ap.Model):
       
       if c.state == 'straight':
         if c.dir == 'up':
-          if car_pos[0] == 17:
+          if car_pos[0] == 21:
             if self.crossings[2].color == 'green':
               choice = random.choice(turn_or_not)
               if choice == 'turn':
@@ -214,7 +214,7 @@ class Interseccion(ap.Model):
             c.move(car_pos)
 
         elif c.dir == 'down':
-          if car_pos[0] == 14:
+          if car_pos[0] == 15:
             if self.crossings[0].color == 'green':
               choice = random.choice(turn_or_not)
               if choice == 'turn':
@@ -228,7 +228,7 @@ class Interseccion(ap.Model):
             c.move(car_pos)
 
         elif c.dir == 'left':
-          if car_pos[1] == 17:
+          if car_pos[1] == 34:
             if self.crossings[1].color == 'green':
               choice = random.choice(turn_or_not)
               if choice == 'turn':
@@ -242,7 +242,7 @@ class Interseccion(ap.Model):
             c.move(car_pos)
 
         elif c.dir == 'right':
-          if car_pos[1] == 14:
+          if car_pos[1] == 30:
             if self.crossings[1].color == 'green':
               choice = random.choice(turn_or_not)
               if choice == 'turn':
@@ -256,24 +256,24 @@ class Interseccion(ap.Model):
             c.move(car_pos)
           
         
-        elif c.state == 'crossing':
-          c.move()
+      elif c.state == 'crossing':
+        c.move(car_pos)
         
 
-        elif c.state == 'stopped':
+      elif c.state == 'stopped':
 
-          if c.dir == 'up':
-            if self.crossings[2].color == 'green':
-              c.state = 'straight'
-          elif c.dir == 'down':
-            if self.crossings[0].color == 'green':
-              c.state = 'straight'
-          elif c.dir == 'left':
-            if self.crossings[1].color == 'green':
-              c.sate = 'straight'
-          elif c.dir == 'right':
-            if self.crossings[3].color == 'green':
-              c.state = 'straight'
+        if c.dir == 'up':
+          if self.crossings[2].color == 'green':
+            c.state = 'straight'
+        elif c.dir == 'down':
+          if self.crossings[0].color == 'green':
+            c.state = 'straight'
+        elif c.dir == 'left':
+          if self.crossings[1].color == 'green':
+            c.sate = 'straight'
+        elif c.dir == 'right':
+          if self.crossings[3].color == 'green':
+            c.state = 'straight'
 
       # 0 north, 1 east, 2 south, 3 west
       
@@ -316,7 +316,7 @@ class Interseccion(ap.Model):
 parameters = {
   'car_pop': 5,
   'light_pop': 4,
-  'steps': 10,
+  'steps': 100,
   'size': 10
 }
 pd.set_option("display.max_rows", 255, "display.max_columns", 5)
